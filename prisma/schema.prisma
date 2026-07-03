@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DocumentStatus {
+  INBOX
+  LATER
+  ARCHIVED
+}
+
+enum DocumentSourceType {
+  URL
+  PDF
+  TEXT
+}
+
+enum ImportJobStatus {
+  QUEUED
+  PROCESSING
+  READY
+  FAILED
+}
+
+model Document {
+  id             String           @id @default(cuid())
+  sourceType     DocumentSourceType
+  status         DocumentStatus   @default(INBOX)
+  title          String
+  author         String?
+  siteName       String?
+  domain         String?
+  sourceUrl      String?
+  excerpt        String?
+  cleanedHtml    String?
+  extractedText  String?
+  estimatedMins  Int?
+  readingProgress Int             @default(0)
+  lastOpenedAt   DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  assets         DocumentAsset[]
+  highlights     Highlight[]
+  notes          DocumentNote[]
+  tags           DocumentTag[]
+  sessions       ReadingSession[]
+}
+
+model DocumentAsset {
+  id           String   @id @default(cuid())
+  documentId   String
+  kind         String
+  originalUrl  String?
+  storagePath  String?
+  mimeType     String?
+  coverImage   String?
+  metadataJson Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  document     Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+model Highlight {
+  id           String   @id @default(cuid())
+  documentId   String
+  selectedText String
+  note         String?
+  color        String   @default("amber")
+  anchorJson   Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  document     Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+model DocumentNote {
+  id         String   @id @default(cuid())
+  documentId String
+  body       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+model Tag {
+  id        String        @id @default(cuid())
+  label     String        @unique
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  documents DocumentTag[]
+}
+
+model DocumentTag {
+  id         String   @id @default(cuid())
+  documentId String
+  tagId      String
+  createdAt  DateTime @default(now())
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, tagId])
+}
+
+model SavedView {
+  id        String   @id @default(cuid())
+  name      String
+  icon      String
+  rawQuery  String
+  astJson   Json
+  pinned    Boolean  @default(true)
+  pinOrder  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ImportJob {
+  id            String          @id @default(cuid())
+  documentId     String?
+  source         String
+  sourceType     DocumentSourceType
+  status         ImportJobStatus @default(QUEUED)
+  failureReason  String?
+  retryCount     Int            @default(0)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model ReadingSession {
+  id             String   @id @default(cuid())
+  documentId      String
+  lastPosition    String?
+  progressPercent Int      @default(0)
+  totalMinutes    Int?
+  updatedAt       DateTime @updatedAt
+  document        Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}

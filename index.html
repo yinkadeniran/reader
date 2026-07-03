@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monograph Reader</title>
+    <link rel="stylesheet" href="./static/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-row">
+          <div>
+            <p class="brand-kicker">Personal Knowledge</p>
+            <h1>Reader</h1>
+          </div>
+          <button class="ghost-icon" id="quick-import-button" aria-label="Import">
+            +
+          </button>
+        </div>
+
+        <nav class="primary-nav">
+          <button class="nav-item" data-route="home">
+            <span>Home</span>
+          </button>
+          <button class="nav-item active" data-route="library">
+            <span>Library</span>
+          </button>
+          <button class="nav-item" data-route="search">
+            <span>Search</span>
+          </button>
+          <button class="nav-item" data-route="import">
+            <span>Import</span>
+          </button>
+          <button class="nav-item" data-route="preferences">
+            <span>Preferences</span>
+          </button>
+          <button class="nav-item" data-route="views">
+            <span>Saved Views</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-section">
+          <p class="sidebar-label">Library</p>
+          <div class="sidebar-stack" id="sidebar-fixed-views"></div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-line">
+            <p class="sidebar-label">Pinned</p>
+            <button class="text-button" data-route="views">Manage</button>
+          </div>
+          <div class="sidebar-stack" id="sidebar-pinned-views"></div>
+        </div>
+
+        <div class="sidebar-footer">
+          <button class="nav-item subtle" data-route="search">
+            <span>Universal Search</span>
+          </button>
+          <button class="nav-item subtle" data-route="preferences">
+            <span>Preferences</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="surface">
+        <header class="topbar">
+          <div class="topbar-left">
+            <div class="eyebrow">Monograph</div>
+            <div>
+              <h2 id="page-title">Library</h2>
+              <p id="page-subtitle">Everything saved, highlighted, and worth resurfacing.</p>
+            </div>
+          </div>
+
+          <div class="topbar-right">
+            <div class="sync-status" id="sync-status">Local-only mode</div>
+            <button class="pill-button" id="sync-now-button" type="button">Sync Now</button>
+            <button class="pill-button" id="open-command-palette">Command Menu</button>
+            <button class="pill-button primary" data-route="import">Add Document</button>
+          </div>
+        </header>
+
+        <section class="auth-banner" id="auth-banner">
+          <div class="auth-banner-copy">
+            <p class="eyebrow">Cloud Sync</p>
+            <h3 id="auth-title">Connect Supabase to sync your library</h3>
+            <p id="auth-message">
+              Add Supabase credentials in Vercel, then sign in to keep your Reader data synced across web,
+              desktop, and Android builds.
+            </p>
+          </div>
+          <form class="auth-inline-form" id="auth-form">
+            <label class="sr-only" for="auth-email">Email</label>
+            <input id="auth-email" name="email" class="text-input" type="email" placeholder="you@example.com" />
+            <button class="pill-button primary" id="auth-submit" type="submit">Send magic link</button>
+            <button class="pill-button" id="sign-out-button" type="button">Sign Out</button>
+          </form>
+        </section>
+
+        <section class="page active" id="page-home">
+          <div class="dashboard-grid" id="home-grid"></div>
+        </section>
+
+        <section class="page" id="page-library">
+          <div class="library-layout">
+            <section class="library-pane">
+              <div class="toolbar">
+                <div class="toolbar-tabs" id="status-tabs"></div>
+                <div class="toolbar-actions">
+                  <input
+                    id="library-filter"
+                    class="search-input compact"
+                    type="search"
+                    placeholder="Filter title, source, tag"
+                  />
+                  <select id="library-sort" class="select-input">
+                    <option value="updated-desc">Date moved</option>
+                    <option value="created-desc">Recently added</option>
+                    <option value="progress-desc">Progress</option>
+                    <option value="minutes-asc">Quick reads first</option>
+                  </select>
+                </div>
+              </div>
+              <div class="document-list" id="document-list"></div>
+            </section>
+
+            <section class="reader-shell">
+              <aside class="reader-outline">
+                <div class="outline-header">
+                  <h3>Contents</h3>
+                  <button class="ghost-icon small" id="toggle-outline">-</button>
+                </div>
+                <div id="outline-list" class="outline-list"></div>
+              </aside>
+
+              <article class="reader-article" id="reader-article"></article>
+
+              <aside class="reader-panel">
+                <div class="panel-tabs">
+                  <button class="panel-tab active" data-panel="info">Info</button>
+                  <button class="panel-tab" data-panel="notes">Notebook</button>
+                  <button class="panel-tab" data-panel="chat">Chat</button>
+                </div>
+                <div class="panel-body" id="reader-panel"></div>
+              </aside>
+            </section>
+          </div>
+        </section>
+
+        <section class="page" id="page-search">
+          <div class="panel-surface search-page">
+            <div class="search-hero">
+              <div>
+                <p class="eyebrow">Universal Search</p>
+                <h3>Recall everything you saved</h3>
+              </div>
+              <div class="query-hint">Try: <code>tag:business AND in:archive</code></div>
+            </div>
+            <input id="global-search-input" class="search-input" type="search" placeholder="Search title, author, source, notes, tags, highlights" />
+            <div class="filter-chip-row" id="search-chip-row"></div>
+            <div class="search-results" id="search-results"></div>
+          </div>
+        </section>
+
+        <section class="page" id="page-import">
+          <div class="panel-surface import-page">
+            <div class="section-heading">
+              <p class="eyebrow">Ingestion</p>
+              <h3>Add a URL, PDF, or text note</h3>
+            </div>
+            <div class="import-grid">
+              <form class="form-card" id="url-import-form">
+                <h4>Import URL</h4>
+                <label>
+                  URL
+                  <input name="url" class="text-input" placeholder="https://example.com/article" required />
+                </label>
+                <label>
+                  Title override
+                  <input name="title" class="text-input" placeholder="Optional custom title" />
+                </label>
+                <button class="pill-button primary" type="submit">Queue article</button>
+              </form>
+
+              <form class="form-card" id="pdf-import-form">
+                <h4>Import PDF</h4>
+                <label>
+                  PDF title
+                  <input name="title" class="text-input" placeholder="Research memo, book chapter..." required />
+                </label>
+                <label>
+                  Author
+                  <input name="author" class="text-input" placeholder="Optional author" />
+                </label>
+                <button class="pill-button primary" type="submit">Queue PDF</button>
+              </form>
+
+              <form class="form-card full" id="text-import-form">
+                <h4>Paste text</h4>
+                <label>
+                  Title
+                  <input name="title" class="text-input" placeholder="Meeting note, essay draft..." required />
+                </label>
+                <label>
+                  Body
+                  <textarea name="body" class="text-area" rows="10" placeholder="Paste article text, transcript, or notes here." required></textarea>
+                </label>
+                <button class="pill-button primary" type="submit">Create document</button>
+              </form>
+            </div>
+            <div class="job-list" id="import-job-list"></div>
+          </div>
+        </section>
+
+        <section class="page" id="page-preferences">
+          <div class="panel-surface settings-page">
+            <div class="section-heading">
+              <p class="eyebrow">Preferences</p>
+              <h3>Reader defaults and workflow settings</h3>
+            </div>
+            <div class="settings-grid">
+              <div class="form-card">
+                <h4>Reading flow</h4>
+                <label class="toggle-row"><span>Open last read document on load</span><input id="pref-resume" type="checkbox" /></label>
+                <label class="toggle-row"><span>Show outline by default</span><input id="pref-outline" type="checkbox" /></label>
+                <label class="toggle-row"><span>Enable keyboard shortcuts</span><input id="pref-shortcuts" type="checkbox" /></label>
+              </div>
+              <div class="form-card">
+                <h4>Library defaults</h4>
+                <label>
+                  Default status tab
+                  <select id="pref-default-status" class="select-input">
+                    <option value="inbox">Inbox</option>
+                    <option value="later">Later</option>
+                    <option value="archive">Archive</option>
+                  </select>
+                </label>
+                <label>
+                  Accent theme
+                  <select id="pref-accent" class="select-input">
+                    <option value="blue">Blue Spectrum</option>
+                    <option value="teal">Teal Current</option>
+                    <option value="amber">Amber Markup</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-views">
+          <div class="panel-surface views-page">
+            <div class="section-heading">
+              <p class="eyebrow">Saved Views</p>
+              <h3>Pin query-based slices of your library</h3>
+            </div>
+            <form class="form-card" id="saved-view-form">
+              <div class="dual-grid">
+                <label>
+                  View name
+                  <input name="name" class="text-input" placeholder="Quick Reads" required />
+                </label>
+                <label>
+                  Icon
+                  <input name="icon" class="text-input" placeholder="lightning" />
+                </label>
+              </div>
+              <label>
+                Query
+                <input name="query" class="text-input" placeholder="minutes:<10 AND in:inbox" required />
+              </label>
+              <label class="toggle-row">
+                <span>Pin to sidebar</span>
+                <input name="pinned" type="checkbox" checked />
+              </label>
+              <button class="pill-button primary" type="submit">Save view</button>
+            </form>
+            <div class="saved-view-list" id="saved-view-list"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="command-palette" class="command-dialog">
+      <form method="dialog" class="command-card">
+        <div class="command-head">
+          <h3>Command Menu</h3>
+          <button class="ghost-icon small" value="cancel">x</button>
+        </div>
+        <div class="command-grid">
+          <button class="command-item" data-command="route:home">Go to Home</button>
+          <button class="command-item" data-command="route:library">Open Library</button>
+          <button class="command-item" data-command="route:search">Open Search</button>
+          <button class="command-item" data-command="route:import">Import Something</button>
+          <button class="command-item" data-command="status:archive">Archive Current Document</button>
+          <button class="command-item" data-command="status:later">Move Current to Later</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./static/app.js"></script>
+  </body>
+</html>

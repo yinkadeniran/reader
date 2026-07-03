@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monograph Reader Preview</title>
+    <style>
+      :root {
+        --bg: #11161c;
+        --bg-soft: #171d24;
+        --bg-strong: #1c232d;
+        --line: rgba(171, 188, 214, 0.14);
+        --text: #eef2f7;
+        --muted: #8f99a8;
+        --accent: #5aa4ff;
+        --accent-soft: rgba(90, 164, 255, 0.14);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, "SF Pro Text", "Segoe UI", sans-serif;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        border-right: 1px solid var(--line);
+        background: #0f141a;
+        padding: 24px 16px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .icon-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+      }
+
+      .nav-section {
+        margin-bottom: 24px;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        color: var(--muted);
+      }
+
+      .nav-item.active {
+        background: var(--bg-strong);
+        color: var(--text);
+      }
+
+      .nav-title {
+        margin: 22px 0 8px;
+        padding: 0 14px;
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .content {
+        display: grid;
+        grid-template-rows: 72px 1fr;
+      }
+
+      .topbar {
+        border-bottom: 1px solid var(--line);
+        background: var(--bg-soft);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 28px;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 28px;
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .tabs .active {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .main {
+        display: grid;
+        grid-template-columns: 1fr 440px;
+      }
+
+      .library {
+        border-right: 1px solid var(--line);
+      }
+
+      .library-header {
+        padding: 24px 28px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .library-header h2 {
+        margin: 0;
+        font-size: 30px;
+      }
+
+      .library-header p {
+        margin: 10px 0 0;
+        color: var(--muted);
+      }
+
+      .list-row {
+        display: grid;
+        grid-template-columns: 100px 1fr;
+        gap: 20px;
+        padding: 26px 28px;
+        border-bottom: 1px solid var(--line);
+        position: relative;
+      }
+
+      .list-row.active::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 18px;
+        bottom: 18px;
+        width: 4px;
+        border-radius: 0 999px 999px 0;
+        background: var(--accent);
+      }
+
+      .cover {
+        width: 100px;
+        height: 100px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background:
+          radial-gradient(circle at top left, rgba(93, 164, 255, 0.18), transparent 38%),
+          radial-gradient(circle at bottom right, rgba(167, 91, 255, 0.2), transparent 44%),
+          linear-gradient(180deg, #19212b, #10161d);
+      }
+
+      .row-title {
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1.25;
+      }
+
+      .row-excerpt {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.6;
+      }
+
+      .row-meta {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .progress {
+        margin-top: 18px;
+        height: 2px;
+        border-radius: 999px;
+        background: #2a3440;
+        overflow: hidden;
+      }
+
+      .progress > div {
+        height: 100%;
+        background: linear-gradient(90deg, #42b8ff 0%, #6d66ff 55%, #cf3bff 100%);
+      }
+
+      .reader {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+      }
+
+      .toc {
+        border-right: 1px solid var(--line);
+        padding: 28px 20px;
+        color: var(--muted);
+      }
+
+      .toc h3 {
+        margin: 0 0 20px;
+        color: var(--text);
+        font-size: 16px;
+      }
+
+      .toc a {
+        display: block;
+        padding: 10px 0;
+      }
+
+      .toc a.active {
+        color: var(--accent);
+      }
+
+      .article {
+        padding: 34px 38px;
+      }
+
+      .eyebrow {
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 18px;
+      }
+
+      .title {
+        margin: 26px 0 18px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 64px;
+        line-height: 0.95;
+        letter-spacing: -0.05em;
+      }
+
+      .article-meta {
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 17px;
+      }
+
+      .article-body {
+        margin-top: 34px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 32px;
+        line-height: 1.5;
+        color: #d8dfe8;
+      }
+
+      .article-body h4 {
+        margin: 54px 0 18px;
+        font-size: 30px;
+        line-height: 1.1;
+        color: var(--text);
+      }
+
+      .article-body p {
+        margin: 0 0 24px;
+      }
+
+      .panel {
+        border-left: 1px solid var(--line);
+        background: #121820;
+        padding: 28px;
+      }
+
+      .panel-tabs {
+        display: flex;
+        gap: 22px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--line);
+        font-size: 17px;
+      }
+
+      .panel-tabs .active {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .card {
+        margin-top: 24px;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--bg-soft);
+      }
+
+      .card-title {
+        margin: 0 0 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .tag {
+        display: inline-block;
+        margin: 8px 8px 0 0;
+        padding: 8px 12px;
+        border-radius: 10px;
+        background: var(--bg-strong);
+        font-size: 15px;
+      }
+
+      .meta-grid {
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        gap: 14px 18px;
+        color: var(--muted);
+        font-size: 16px;
+      }
+
+      .meta-grid strong {
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      @media (max-width: 1200px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          display: none;
+        }
+
+        .main,
+        .reader {
+          grid-template-columns: 1fr;
+        }
+
+        .toc,
+        .panel,
+        .library {
+          border: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <h1>Reader</h1>
+          <div>
+            <span class="icon-btn">+</span>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <a class="nav-item" href="#">Home</a>
+          <a class="nav-item active" href="#">Library</a>
+          <a class="nav-item" href="#">Search</a>
+          <a class="nav-item" href="#">Preferences</a>
+        </div>
+
+        <div class="nav-title">Library</div>
+        <div class="nav-section">
+          <a class="nav-item" href="#">Articles</a>
+          <a class="nav-item" href="#">PDFs</a>
+          <a class="nav-item" href="#">Quick Reads</a>
+          <a class="nav-item" href="#">Archive</a>
+          <a class="nav-item" href="#">Tags</a>
+        </div>
+      </aside>
+
+      <section class="content">
+        <header class="topbar">
+          <div class="tabs">
+            <span class="active">Library</span>
+            <span>Inbox</span>
+            <span>Later</span>
+            <span>Archive</span>
+          </div>
+          <div class="tabs">
+            <span>Sort: Date moved</span>
+          </div>
+        </header>
+
+        <div class="main">
+          <section class="library">
+            <div class="library-header">
+              <h2>Archive</h2>
+              <p>Everything saved, highlighted, and worth finding again.</p>
+            </div>
+
+            <a class="list-row active" href="#">
+              <div class="cover"></div>
+              <div>
+                <div class="row-title">How to Build a Superteam That Keeps Getting Better</div>
+                <div class="row-excerpt">Research across high-performing teams shows that the best organizations learn faster than everyone else.</div>
+                <div class="row-meta">hbr.org • Ron Friedman • 1 min left • Leadership</div>
+                <div class="progress"><div style="width: 82%"></div></div>
+              </div>
+            </a>
+
+            <a class="list-row" href="#">
+              <div class="cover"></div>
+              <div>
+                <div class="row-title">How Founder-CEO Alignment Makes Scaling Even Easier</div>
+                <div class="row-excerpt">Hiring a CEO can be a transformational moment, but only when founder purpose and operational leadership stay aligned.</div>
+                <div class="row-meta">entrepreneur.com • Anastasia Dellis • 5 mins • Business</div>
+                <div class="progress"><div style="width: 12%"></div></div>
+              </div>
+            </a>
+
+            <a class="list-row" href="#">
+              <div class="cover"></div>
+              <div>
+                <div class="row-title">Why search should feel like recall, not filing</div>
+                <div class="row-excerpt">Saved views help you decide late. Search helps you remember when the work actually matters.</div>
+                <div class="row-meta">manual-entry • Personal note • 3 mins • Writing</div>
+                <div class="progress"><div style="width: 100%"></div></div>
+              </div>
+            </a>
+          </section>
+
+          <section class="reader">
+            <aside class="toc">
+              <h3>Contents</h3>
+              <a class="active" href="#">Summary</a>
+              <a href="#">Continuous improvement</a>
+              <a href="#">Feedback and learning</a>
+            </aside>
+
+            <article class="article">
+              <div class="eyebrow">HBR.ORG</div>
+              <h1 class="title">How to Build a Superteam That Keeps Getting Better</h1>
+              <div class="article-meta">Ron Friedman • 1 min • Leadership • May 1st</div>
+
+              <div class="article-body">
+                <h4>Summary</h4>
+                <p>
+                  In periods of rapid change, the teams that outperform everyone else are not those with the
+                  best plans or the most talent but those that learn the fastest.
+                </p>
+                <p>
+                  High-performing teams build cultures of continuous improvement. Their leaders encourage
+                  curiosity, experimentation, and feedback that supports learning rather than punishing
+                  mistakes.
+                </p>
+                <p>
+                  The result is a system where reading, annotation, and retrieval compound over time instead
+                  of getting buried in folders.
+                </p>
+              </div>
+            </article>
+          </section>
+
+          <aside class="panel">
+            <div class="panel-tabs">
+              <span class="active">Info</span>
+              <span>Notebook</span>
+              <span>Chat</span>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Summary</div>
+              <p>The best teams learn faster than others. Their leaders create space for curiosity, feedback, and growth.</p>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Document Tags</div>
+              <span class="tag">Leadership</span>
+              <span class="tag">Teams</span>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Metadata</div>
+              <div class="meta-grid">
+                <span>Type</span><strong>Article</strong>
+                <span>Domain</span><strong>hbr.org</strong>
+                <span>Length</span><strong>1 min</strong>
+                <span>Progress</span><strong>82%</strong>
+                <span>Saved</span><strong>May 1st</strong>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Highlights</div>
+              <p>“The teams that outperform everyone else are those that learn the fastest.”</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </div>
+  </body>
+  </html>

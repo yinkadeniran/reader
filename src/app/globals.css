@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+:root {
+  --background: #11161c;
+  --foreground: #eef2f7;
+  --surface: #171d24;
+  --surface-strong: #1c232d;
+  --surface-muted: #131920;
+  --line: rgba(171, 188, 214, 0.14);
+  --muted: #8f99a8;
+  --accent: #5aa4ff;
+  --accent-soft: rgba(90, 164, 255, 0.14);
+  --success: #3cb179;
+  --warning: #d1a340;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-surface-muted: var(--surface-muted);
+  --color-line: var(--line);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --font-sans: "Inter", "SF Pro Text", "Segoe UI", sans-serif;
+  --font-mono: "SFMono-Regular", "Menlo", "Monaco", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: #0f141a;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(90, 164, 255, 0.28);
+}
+
+.paper {
+  background: var(--surface);
+}
+
+.paper-strong {
+  background: var(--surface-strong);
+}
+
+.grain {
+  position: relative;
+}
+
+.grain::before {
+  pointer-events: none;
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.02)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.11'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+  opacity: 0.18;
+}
+
+.reader-html p {
+  margin: 0 0 1rem;
+  line-height: 1.85;
+}
+
+.reader-html h1,
+.reader-html h2,
+.reader-html h3 {
+  margin: 2rem 0 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.reader-html h1 {
+  font-size: 4.25rem;
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+}
+
+.reader-html h2 {
+  font-size: 3rem;
+  line-height: 1.02;
+}
+
+.reader-html h3 {
+  font-size: 1.6rem;
+}
+
+.reader-html ul,
+.reader-html ol {
+  margin: 1rem 0 1rem 1.2rem;
+}
+
+.reader-html blockquote {
+  border-left: 3px solid rgba(90, 164, 255, 0.55);
+  margin: 1.5rem 0;
+  padding-left: 1rem;
+  color: var(--muted);
+}
+
+.reader-html img {
+  border-radius: 1rem;
+  margin: 1.75rem 0;
+}
+
+.reader-html a {
+  color: var(--accent);
+}
+
+.reader-html strong {
+  color: #f8fbff;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(143, 153, 168, 0.24);
+  border-radius: 999px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
