@@ -2,7 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { filterDocuments, parseQuery } from "@/lib/query";
 import { parseArticleFromUrl, parsePdfBuffer } from "@/lib/importers";
-import { readStore, writeStore, getUploadsRoot } from "@/lib/store";
+import { readStore, writeStore, getUploadsRoot, isRemoteStoreEnabled } from "@/lib/store";
 import type {
   DocumentListFilters,
   DocumentSourceType,
@@ -360,10 +360,15 @@ export async function importPdfDocument(file: File) {
 
   const buffer = Buffer.from(await file.arrayBuffer());
   const parsed = await parsePdfBuffer(buffer);
-  const uploadsRoot = getUploadsRoot();
-  const basename = `${Date.now()}-${slugify(file.name) || "upload"}.pdf`;
-  const storagePath = path.join(uploadsRoot, basename);
-  await fs.writeFile(storagePath, buffer);
+  const remoteStore = isRemoteStoreEnabled();
+  let basename: string | undefined;
+
+  if (!remoteStore) {
+    const uploadsRoot = getUploadsRoot();
+    basename = `${Date.now()}-${slugify(file.name) || "upload"}.pdf`;
+    const storagePath = path.join(uploadsRoot, basename);
+    await fs.writeFile(storagePath, buffer);
+  }
 
   const documentId = createId("doc");
   const document: ReaderDocument = {

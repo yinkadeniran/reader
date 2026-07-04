@@ -1,48 +1,53 @@
 # Monograph
 
-A personal Reader-style reading platform built as a deployable static web app, with optional Supabase-backed cloud sync for Vercel, desktop wrappers, and Android wrappers.
+A personal Reader-style reading workspace built with Next.js. It ships with a local store for development, a stable demo fallback for Vercel previews, and an optional Supabase-backed shared store for real deployment.
 
-## What It Includes
+## Stack
 
-- Readwise-style dark library and reader layout
-- Home, library, search, import, preferences, and saved-view pages
-- Keyboard navigation and command palette
-- URL, PDF, and pasted-text import stubs
-- Highlights, notes, tags, progress, and saved views
-- Local-first persistence in `localStorage`
-- Optional Supabase auth and cloud sync through a single private app-state table
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- Route handlers for imports and library actions
+- Optional Supabase persistence through one server-side JSON snapshot table
 
-## Local Preview
-
-1. Serve the project root as a static site.
-2. Open `index.html` through that local server.
-
-Example:
+## Local Development
 
 ```bash
-cd /Users/mac/Documents/readwise-reader-mvp
-python3 -m http.server 3001
+cd reader
+npm install
+npm run dev
 ```
 
-Then open [http://localhost:3001](http://localhost:3001).
+Open [http://localhost:3000](http://localhost:3000).
 
-## Vercel + Supabase Setup
+Without Supabase env vars, the app uses:
+- `local` storage on your machine in development
+- `demo` storage on Vercel, using a stable in-memory seed
 
-1. Create a Supabase project.
-2. Run the SQL in [supabase/schema.sql](/Users/mac/Documents/readwise-reader-mvp/supabase/schema.sql).
-3. In Vercel project environment variables, add:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-4. Redeploy.
-5. Open the deployed app and sign in with the magic-link form in the sync banner.
+## Supabase Setup
 
-The Vercel function at [api/config.js](/Users/mac/Documents/readwise-reader-mvp/api/config.js) exposes only the public Supabase URL and anon key to the browser.
+Run the SQL in [supabase/schema.sql](supabase/schema.sql).
 
-## Deployable Files
+Add these env vars in Vercel:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_STORE_ID`
 
-- [index.html](/Users/mac/Documents/readwise-reader-mvp/index.html)
-- [static/styles.css](/Users/mac/Documents/readwise-reader-mvp/static/styles.css)
-- [static/app.js](/Users/mac/Documents/readwise-reader-mvp/static/app.js)
-- [vercel.json](/Users/mac/Documents/readwise-reader-mvp/vercel.json)
-- [api/config.js](/Users/mac/Documents/readwise-reader-mvp/api/config.js)
-- [supabase/schema.sql](/Users/mac/Documents/readwise-reader-mvp/supabase/schema.sql)
+Optional:
+- `APP_STORAGE_ROOT`
+
+Notes:
+- `SUPABASE_STORE_ID` defaults to `primary`
+- once these env vars are present, the app reads and writes the full library state from Supabase
+- the home screen will show `Storage backend: supabase` when the hosted store is active
+
+## Deployment
+
+Push to `main` and let Vercel redeploy.
+
+After deploy, verify:
+- `/home`
+- `/library/inbox`
+- `/read/doc_demo_article`
+
+If Supabase is configured correctly, imports, status changes, highlights, notes, and saved views will persist across sessions.

@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { getDashboardData } from "@/lib/repository";
+import { getStoreBackendLabel } from "@/lib/store";
 
 export default async function HomePage() {
   const dashboard = await getDashboardData();
+  const backendLabel = getStoreBackendLabel();
 
   return (
     <div className="grid min-h-full gap-6 p-6 xl:grid-cols-[1.25fr_0.75fr]">
@@ -14,6 +16,9 @@ export default async function HomePage() {
             <p className="mt-3 max-w-3xl text-[17px] leading-8 text-muted">
               Keep capture, triage, and retrieval inside one interface. The fastest path into the product is still the library, but this page shows what needs attention first.
             </p>
+            <div className="mt-4 inline-flex rounded-full border border-line bg-surface-strong px-3 py-2 text-xs uppercase tracking-[0.2em] text-muted">
+              Storage backend: {backendLabel}
+            </div>
           </div>
           <Link href="/import" className="rounded-xl bg-accent px-4 py-3 text-sm font-medium text-white">
             Import
