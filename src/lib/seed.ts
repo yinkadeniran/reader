@@ -1,14 +1,20 @@
-import { createId } from "@/lib/utils";
 import type { ReaderStore } from "@/lib/types";
 import { parseQuery } from "@/lib/query";
 
 const now = new Date();
+const DEMO_ARTICLE_ID = "doc_demo_article";
+const DEMO_PDF_ID = "doc_demo_pdf";
+const DEMO_TEXT_ID = "doc_demo_text";
+const DEMO_HIGHLIGHT_ID = "hl_demo_article_summary";
+const DEMO_QUICK_READS_VIEW_ID = "view_demo_quick_reads";
+const DEMO_RESEARCH_PDFS_VIEW_ID = "view_demo_research_pdfs";
+const DEMO_IMPORT_JOB_ID = "job_demo_article_import";
 
 export function createSeedStore(): ReaderStore {
-  const articleId = createId("doc");
-  const pdfId = createId("doc");
-  const textId = createId("doc");
-  const highlightId = createId("hl");
+  const articleId = DEMO_ARTICLE_ID;
+  const pdfId = DEMO_PDF_ID;
+  const textId = DEMO_TEXT_ID;
+  const highlightId = DEMO_HIGHLIGHT_ID;
 
   return {
     documents: [
@@ -33,7 +39,7 @@ export function createSeedStore(): ReaderStore {
         updatedAt: new Date(now.getTime() - 1000 * 60 * 18).toISOString(),
         assets: [
           {
-            id: createId("asset"),
+            id: "asset_demo_article_original",
             kind: "original",
             originalUrl: "https://example.com/personal-reading-systems",
             mimeType: "text/html",
@@ -53,7 +59,7 @@ export function createSeedStore(): ReaderStore {
         ],
         notes: [
           {
-            id: createId("note"),
+            id: "note_demo_article_rationale",
             documentId: articleId,
             body: "Potential reference for the home dashboard rationale.",
             createdAt: new Date(now.getTime() - 1000 * 60 * 12).toISOString(),
@@ -61,12 +67,12 @@ export function createSeedStore(): ReaderStore {
           },
         ],
         tags: [
-          { id: createId("tag"), label: "product" },
-          { id: createId("tag"), label: "design-systems" },
+          { id: "tag_demo_product", label: "product" },
+          { id: "tag_demo_design_systems", label: "design-systems" },
         ],
         sessions: [
           {
-            id: createId("session"),
+            id: "session_demo_article_active",
             documentId: articleId,
             lastPosition: "paragraph-3",
             progressPercent: 42,
@@ -92,7 +98,7 @@ export function createSeedStore(): ReaderStore {
         updatedAt: new Date(now.getTime() - 1000 * 60 * 110).toISOString(),
         assets: [
           {
-            id: createId("asset"),
+            id: "asset_demo_pdf_file",
             kind: "pdf",
             storagePath: "uploads/demo-brief.pdf",
             mimeType: "application/pdf",
@@ -101,7 +107,7 @@ export function createSeedStore(): ReaderStore {
         ],
         highlights: [],
         notes: [],
-        tags: [{ id: createId("tag"), label: "research" }],
+        tags: [{ id: "tag_demo_research", label: "research" }],
         sessions: [],
       },
       {
@@ -124,13 +130,13 @@ export function createSeedStore(): ReaderStore {
         assets: [],
         highlights: [],
         notes: [],
-        tags: [{ id: createId("tag"), label: "writing" }],
+        tags: [{ id: "tag_demo_writing", label: "writing" }],
         sessions: [],
       },
     ],
     savedViews: [
       {
-        id: createId("view"),
+        id: DEMO_QUICK_READS_VIEW_ID,
         name: "Quick Reads",
         icon: "Clock3",
         rawQuery: "minutes:<10 AND in:inbox",
@@ -141,7 +147,7 @@ export function createSeedStore(): ReaderStore {
         updatedAt: now.toISOString(),
       },
       {
-        id: createId("view"),
+        id: DEMO_RESEARCH_PDFS_VIEW_ID,
         name: "Research PDFs",
         icon: "FileText",
         rawQuery: "type:pdf AND tag:research",
@@ -154,7 +160,7 @@ export function createSeedStore(): ReaderStore {
     ],
     importJobs: [
       {
-        id: createId("job"),
+        id: DEMO_IMPORT_JOB_ID,
         documentId: articleId,
         source: "https://example.com/personal-reading-systems",
         sourceType: "url",
