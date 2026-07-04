@@ -1,7 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { filterDocuments, parseQuery } from "@/lib/query";
-import { parseArticleFromUrl, parsePdfBuffer } from "@/lib/importers";
 import { readStore, writeStore, getUploadsRoot, isRemoteStoreEnabled } from "@/lib/store";
 import type {
   DocumentListFilters,
@@ -301,6 +300,7 @@ export async function importUrlDocument(url: string) {
   await writeStore(store);
 
   try {
+    const { parseArticleFromUrl } = await import("@/lib/importers");
     const parsed = await parseArticleFromUrl(url);
     const documentId = createId("doc");
     const document: ReaderDocument = {
@@ -359,6 +359,7 @@ export async function importPdfDocument(file: File) {
   await writeStore(store);
 
   const buffer = Buffer.from(await file.arrayBuffer());
+  const { parsePdfBuffer } = await import("@/lib/importers");
   const parsed = await parsePdfBuffer(buffer);
   const remoteStore = isRemoteStoreEnabled();
   let basename: string | undefined;

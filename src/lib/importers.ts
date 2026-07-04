@@ -1,5 +1,5 @@
 import { Readability } from "@mozilla/readability";
-import { JSDOM } from "jsdom";
+import { parseHTML } from "linkedom";
 
 function stripHtml(html: string) {
   return html
@@ -11,8 +11,7 @@ function stripHtml(html: string) {
 }
 
 function normalizeArticleHtml(html: string, sourceUrl: string) {
-  const dom = new JSDOM(html, { url: sourceUrl });
-  const { document } = dom.window;
+  const { document } = parseHTML(html);
 
   document.querySelectorAll("img").forEach((img) => {
     const lazySrc =
@@ -65,8 +64,8 @@ export async function parseArticleFromUrl(url: string) {
 
   const rawHtml = await response.text();
   const hostname = new URL(url).hostname;
-  const dom = new JSDOM(rawHtml, { url });
-  const reader = new Readability(dom.window.document);
+  const { document } = parseHTML(rawHtml);
+  const reader = new Readability(document);
   const article = reader.parse();
 
   const titleMatch = rawHtml.match(/<title[^>]*>(.*?)<\/title>/i);
