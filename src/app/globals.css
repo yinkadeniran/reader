@@ -85,8 +85,8 @@ select {
 }
 
 .reader-html p {
-  margin: 0 0 1.25rem;
-  line-height: 1.75;
+  margin: 0 0 1.15rem;
+  line-height: 1.72;
 }
 
 .reader-html h1,
@@ -98,18 +98,18 @@ select {
 }
 
 .reader-html h1 {
-  font-size: 2.9rem;
+  font-size: 2.55rem;
   line-height: 1.02;
   letter-spacing: -0.03em;
 }
 
 .reader-html h2 {
-  font-size: 2rem;
+  font-size: 1.8rem;
   line-height: 1.1;
 }
 
 .reader-html h3 {
-  font-size: 1.45rem;
+  font-size: 1.28rem;
 }
 
 .reader-html article > *:first-child {
@@ -118,8 +118,8 @@ select {
 
 .reader-html ul,
 .reader-html ol {
-  margin: 1rem 0 1.5rem 1.4rem;
-  line-height: 1.7;
+  margin: 1rem 0 1.35rem 1.35rem;
+  line-height: 1.65;
 }
 
 .reader-html li + li {
@@ -128,7 +128,7 @@ select {
 
 .reader-html blockquote {
   border-left: 3px solid rgba(90, 164, 255, 0.55);
-  margin: 1.75rem 0;
+  margin: 1.5rem 0;
   padding-left: 1.1rem;
   color: var(--muted);
   font-style: italic;
@@ -144,7 +144,7 @@ select {
 }
 
 .reader-html figure {
-  margin: 2rem 0;
+  margin: 1.75rem 0;
 }
 
 .reader-html figcaption {

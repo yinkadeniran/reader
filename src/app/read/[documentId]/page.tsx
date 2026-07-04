@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ExternalLink, FileText, Play, Quote } from "lucide-react";
+import { ChevronDown, ExternalLink, FileText, PanelLeft, Play, Quote } from "lucide-react";
 import { DocumentControls } from "@/components/document-controls";
 import { HighlightCapture } from "@/components/highlight-capture";
 import { getDocument } from "@/lib/repository";
@@ -30,9 +30,9 @@ export default async function ReadPage({ params }: { params: Promise<{ documentI
   const headings = extractHeadings(document.cleanedHtml);
 
   return (
-    <div className="grid min-h-full grid-cols-1 xl:grid-cols-[340px_minmax(0,1fr)_450px]">
-      <aside className="border-r border-line bg-[#10161c] px-8 py-7">
-        <div className="flex items-center gap-3 text-muted">
+    <div className="grid min-h-full grid-cols-1 xl:grid-cols-[330px_minmax(0,1fr)_456px]">
+      <aside className="border-r border-line bg-[#0f141a]">
+        <div className="flex items-center gap-3 border-b border-line px-7 py-7 text-muted">
           <Link href="/library/inbox" className="rounded-full bg-surface-strong p-3 hover:text-foreground">
             ←
           </Link>
@@ -40,41 +40,44 @@ export default async function ReadPage({ params }: { params: Promise<{ documentI
             <span className="mr-3">⌃</span>
             <span>⌄</span>
           </button>
+          <button type="button" className="rounded-full border border-line p-3 hover:text-foreground">
+            <PanelLeft className="h-4 w-4" />
+          </button>
         </div>
 
-        <div className="mt-14">
+        <div className="px-7 py-10">
           <p className="text-[15px] font-medium text-foreground">Contents</p>
           <div className="mt-8 space-y-5">
             {headings.length > 0 ? (
               headings.map((heading, index) => (
                 <div key={heading.id} className={index === 0 ? "text-accent" : "text-muted"}>
-                  <div className={heading.level === 1 ? "text-[19px] font-medium" : "text-[17px]"}>
+                  <div className={heading.level === 1 ? "text-[17px] font-medium leading-7" : "text-[16px] leading-7"}>
                     {heading.text}
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-[19px] text-accent">Summary</div>
+              <div className="text-[17px] text-accent">Summary</div>
             )}
           </div>
         </div>
       </aside>
 
-      <section className="border-r border-line bg-background px-8 py-10 xl:px-18">
-        <div className="mx-auto max-w-4xl">
+      <section className="border-r border-line bg-background px-8 py-8 xl:px-16">
+        <div className="mx-auto max-w-[860px]">
           <div className="mb-8 flex items-center justify-between gap-4">
-            <div className="text-[18px] uppercase tracking-[0.12em] text-muted">{document.domain ?? document.siteName ?? "reader"}</div>
+            <div className="text-[17px] uppercase tracking-[0.08em] text-muted">{document.domain ?? document.siteName ?? "reader"}</div>
             <button type="button" className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-3 text-[15px] text-muted">
               <Play className="h-4 w-4" />
               Listen
             </button>
           </div>
 
-          <h1 className="max-w-5xl font-serif text-[68px] font-semibold leading-[0.95] tracking-[-0.05em] text-foreground">
+          <h1 className="max-w-4xl font-serif text-[56px] font-semibold leading-[0.96] tracking-[-0.05em] text-foreground xl:text-[72px]">
             {document.title}
           </h1>
 
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-b border-line pb-8 text-[17px] text-muted">
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-b border-line pb-8 text-[15px] text-muted">
             <div className="flex flex-wrap items-center gap-3">
               <span>{document.author ?? "Unknown author"}</span>
               <span>•</span>
@@ -95,7 +98,7 @@ export default async function ReadPage({ params }: { params: Promise<{ documentI
               </div>
             ) : (
               <article
-                className="reader-html max-w-3xl font-serif text-[22px] leading-[1.75] text-[#d8dfe8] md:text-[24px]"
+                className="reader-html max-w-[760px] font-serif text-[20px] leading-[1.72] text-[#d8dfe8] md:text-[21px]"
                 dangerouslySetInnerHTML={{
                   __html: document.cleanedHtml ?? `<article><p>${document.extractedText ?? ""}</p></article>`,
                 }}
@@ -105,21 +108,39 @@ export default async function ReadPage({ params }: { params: Promise<{ documentI
         </div>
       </section>
 
-      <aside className="scrollbar-thin overflow-y-auto bg-[#121820] px-8 py-8">
-        <div className="flex items-center gap-7 border-b border-line pb-5 text-[17px]">
+      <aside className="scrollbar-thin overflow-y-auto bg-[#10161d] px-8 py-8">
+        <div className="flex items-center gap-7 border-b border-line pb-5 text-[16px]">
           <div className="font-medium text-foreground">Info</div>
           <div className="text-muted">Notebook <span className="rounded-md bg-surface-strong px-2 py-1 text-xs">0</span></div>
           <div className="text-muted">Chat</div>
+          <button type="button" className="ml-auto text-muted">
+            <PanelLeft className="h-4 w-4" />
+          </button>
         </div>
 
         <div className="mt-6">
-          <h2 className="max-w-sm text-[24px] font-semibold leading-tight text-foreground">{document.title}</h2>
-          <p className="mt-2 text-[18px] text-muted">{document.domain ?? document.siteName}</p>
+          <h2 className="max-w-sm text-[22px] font-semibold leading-tight tracking-[-0.02em] text-foreground">{document.title}</h2>
+          <p className="mt-2 text-[16px] text-muted">{document.domain ?? document.siteName}</p>
         </div>
+
+        <div className="mt-7 flex items-center gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-surface-strong text-[24px] text-foreground">
+            {document.author?.slice(0, 1) ?? "L"}
+          </div>
+          <div>
+            <div className="text-[17px] text-foreground">{document.author ?? "Unknown author"}</div>
+            <div className="text-[15px] text-muted">@{(document.author ?? "reader").replace(/\s+/g, "")}</div>
+          </div>
+        </div>
+
+        <button type="button" className="mt-6 flex w-full items-center justify-center gap-2 rounded-full border border-line bg-surface px-5 py-3 text-[15px] text-foreground">
+          Subscribe
+          <ChevronDown className="h-4 w-4" />
+        </button>
 
         <div className="mt-8 rounded-2xl border border-line bg-surface p-5">
           <div className="text-xs uppercase tracking-[0.24em] text-muted">Summary</div>
-          <p className="mt-4 text-[17px] leading-8 text-foreground">
+          <p className="mt-4 text-[15px] leading-8 text-foreground">
             {document.excerpt ?? "This document has been saved to your private reading system and is ready for annotation, tagging, and routing."}
           </p>
         </div>
@@ -128,7 +149,7 @@ export default async function ReadPage({ params }: { params: Promise<{ documentI
           <div className="text-xs uppercase tracking-[0.24em] text-muted">Document tags</div>
           <div className="mt-4 flex flex-wrap gap-2">
             {document.tags.map((tag) => (
-              <span key={tag.id} className="rounded-md bg-surface-strong px-3 py-2 text-[15px] text-foreground">
+              <span key={tag.id} className="rounded-md bg-surface-strong px-3 py-2 text-[14px] text-foreground">
                 {tag.label}
               </span>
             ))}
@@ -137,7 +158,7 @@ export default async function ReadPage({ params }: { params: Promise<{ documentI
 
         <div className="mt-8">
           <div className="text-xs uppercase tracking-[0.24em] text-muted">Metadata</div>
-          <div className="mt-5 grid gap-4 text-[17px]">
+          <div className="mt-5 grid gap-4 text-[15px]">
             <div className="grid grid-cols-[120px_1fr] gap-4">
               <div className="text-muted">Type</div>
               <div className="text-foreground">{document.sourceType === "url" ? "Article" : document.sourceType.toUpperCase()}</div>
@@ -162,7 +183,7 @@ export default async function ReadPage({ params }: { params: Promise<{ documentI
         </div>
 
         <div className="mt-8 rounded-2xl border border-line bg-surface p-5">
-          <div className="text-[18px] font-semibold text-foreground">Edit metadata</div>
+          <div className="text-[16px] font-semibold text-foreground">Edit metadata</div>
           <div className="mt-4">
             <DocumentControls document={document} />
           </div>
@@ -179,7 +200,7 @@ export default async function ReadPage({ params }: { params: Promise<{ documentI
             ) : null}
             {document.highlights.map((highlight) => (
               <div key={highlight.id} className="rounded-2xl border border-line bg-surface p-4">
-                <p className="text-sm leading-7 text-foreground">“{highlight.selectedText}”</p>
+                <p className="text-[14px] leading-7 text-foreground">“{highlight.selectedText}”</p>
                 {highlight.note ? <p className="mt-3 text-sm text-muted">{highlight.note}</p> : null}
               </div>
             ))}
