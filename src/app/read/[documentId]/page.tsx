@@ -95,7 +95,7 @@ export default async function ReadPage({ params }: { params: Promise<{ documentI
               </div>
             ) : (
               <article
-                className="reader-html max-w-4xl font-serif text-[34px] leading-[1.45] text-[#d8dfe8]"
+                className="reader-html max-w-3xl font-serif text-[22px] leading-[1.75] text-[#d8dfe8] md:text-[24px]"
                 dangerouslySetInnerHTML={{
                   __html: document.cleanedHtml ?? `<article><p>${document.extractedText ?? ""}</p></article>`,
                 }}

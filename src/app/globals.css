@@ -85,48 +85,74 @@ select {
 }
 
 .reader-html p {
-  margin: 0 0 1rem;
-  line-height: 1.85;
+  margin: 0 0 1.25rem;
+  line-height: 1.75;
 }
 
 .reader-html h1,
 .reader-html h2,
 .reader-html h3 {
-  margin: 2rem 0 1rem;
+  margin: 2.25rem 0 1rem;
   font-weight: 600;
   line-height: 1.2;
 }
 
 .reader-html h1 {
-  font-size: 4.25rem;
-  line-height: 0.96;
-  letter-spacing: -0.045em;
+  font-size: 2.9rem;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
 }
 
 .reader-html h2 {
-  font-size: 3rem;
-  line-height: 1.02;
+  font-size: 2rem;
+  line-height: 1.1;
 }
 
 .reader-html h3 {
-  font-size: 1.6rem;
+  font-size: 1.45rem;
+}
+
+.reader-html article > *:first-child {
+  margin-top: 0;
 }
 
 .reader-html ul,
 .reader-html ol {
-  margin: 1rem 0 1rem 1.2rem;
+  margin: 1rem 0 1.5rem 1.4rem;
+  line-height: 1.7;
+}
+
+.reader-html li + li {
+  margin-top: 0.6rem;
 }
 
 .reader-html blockquote {
   border-left: 3px solid rgba(90, 164, 255, 0.55);
-  margin: 1.5rem 0;
-  padding-left: 1rem;
+  margin: 1.75rem 0;
+  padding-left: 1.1rem;
   color: var(--muted);
+  font-style: italic;
 }
 
 .reader-html img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
   border-radius: 1rem;
   margin: 1.75rem 0;
+}
+
+.reader-html figure {
+  margin: 2rem 0;
+}
+
+.reader-html figcaption {
+  margin-top: 0.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--muted);
 }
 
 .reader-html a {
@@ -135,6 +161,12 @@ select {
 
 .reader-html strong {
   color: #f8fbff;
+}
+
+.reader-html hr {
+  margin: 2rem 0;
+  border: 0;
+  border-top: 1px solid var(--line);
 }
 
 .scrollbar-thin::-webkit-scrollbar {
